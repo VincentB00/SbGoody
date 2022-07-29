@@ -2,18 +2,26 @@ package com.ecommerce.used_good.bean;
 
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.ecommerce.used_good.util.ConstantUtils;
 
 @Entity
 @Table(name = "USER")
@@ -41,15 +49,31 @@ public class User implements UserDetails
     @Column
     private String email;
 
+    @Column(columnDefinition = "varchar(32) default 'NORMAL'")
+    private String status;
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinTable(name = "privilege",
+        joinColumns = {
+            @JoinColumn(name = "user_id", referencedColumnName = "id")
+        },
+        inverseJoinColumns = {
+            @JoinColumn(name = "user_role_id", referencedColumnName = "id")
+        }        
+    )
+    private List<UserRole> userRoles;
+
     
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private Date create_time;
 
+
+
     public User() {
     }
 
-    public User(int id, String username, String password, String first_name, String last_name, String middle_name, String email, Date create_time) {
+    public User(int id, String username, String password, String first_name, String last_name, String middle_name, String email, String status, List<UserRole> userRoleList, Date create_time) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -57,6 +81,8 @@ public class User implements UserDetails
         this.last_name = last_name;
         this.middle_name = middle_name;
         this.email = email;
+        this.status = status;
+        this.userRoles = userRoleList;
         this.create_time = create_time;
     }
 
@@ -116,6 +142,22 @@ public class User implements UserDetails
         this.email = email;
     }
 
+    public String getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public List<UserRole> getUserRoles() {
+        return this.userRoles;
+    }
+
+    public void setUserRoles(List<UserRole> userRoles) {
+        this.userRoles = userRoles;
+    }
+
     public Date getCreate_time() {
         return this.create_time;
     }
@@ -159,6 +201,16 @@ public class User implements UserDetails
         return this;
     }
 
+    public User status(String status) {
+        setStatus(status);
+        return this;
+    }
+
+    public User userRoles(List<UserRole> userRoles) {
+        setUserRoles(userRoles);
+        return this;
+    }
+
     public User create_time(Date create_time) {
         setCreate_time(create_time);
         return this;
@@ -172,12 +224,12 @@ public class User implements UserDetails
             return false;
         }
         User user = (User) o;
-        return id == user.id && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(first_name, user.first_name) && Objects.equals(last_name, user.last_name) && Objects.equals(middle_name, user.middle_name) && Objects.equals(email, user.email) && Objects.equals(create_time, user.create_time);
+        return id == user.id && Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(first_name, user.first_name) && Objects.equals(last_name, user.last_name) && Objects.equals(middle_name, user.middle_name) && Objects.equals(email, user.email) && Objects.equals(status, user.status) && Objects.equals(userRoles, user.userRoles) && Objects.equals(create_time, user.create_time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, first_name, last_name, middle_name, email, create_time);
+        return Objects.hash(id, username, password, first_name, last_name, middle_name, email, status, userRoles, create_time);
     }
 
     @Override
@@ -190,13 +242,16 @@ public class User implements UserDetails
             ", last_name='" + getLast_name() + "'" +
             ", middle_name='" + getMiddle_name() + "'" +
             ", email='" + getEmail() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", userRoles='" + getUserRoles() + "'" +
             ", create_time='" + getCreate_time() + "'" +
             "}";
     }
-
+    
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.userRoles;
     }
 
     @Override
@@ -206,16 +261,18 @@ public class User implements UserDetails
 
     @Override
     public boolean isAccountNonLocked() {
+        return !this.status.equals(ConstantUtils.USER_STATUS_LOCK);
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() 
+    {
         return true;
     }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
+    public boolean isEnabled() 
+    {
         return true;
     }
 

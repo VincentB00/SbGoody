@@ -16,7 +16,7 @@ public class SecurityUtils {
 	
 	private static final ObjectMapper mapper = new ObjectMapper();
 
-    public static void sendResponse(HttpServletResponse httpResponse, int status, String message, Exception exception) {
+    public static Object sendResponse(HttpServletResponse httpResponse, int status, String message, Exception exception) {
         try
         {
             httpResponse.setContentType("application/json;charset=UTF-8");
@@ -25,6 +25,8 @@ public class SecurityUtils {
             httpResponse.setStatus(status);
             writer.flush();
             writer.close();
+
+            return null;
         }
         catch(IOException ex)
         {

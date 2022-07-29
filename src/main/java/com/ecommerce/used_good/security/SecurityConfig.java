@@ -9,12 +9,29 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.ecommerce.used_good.security.handler.AccessDeniedHandlerImpl;
+import com.ecommerce.used_good.security.handler.AuthenticationEntryPointImpl;
+import com.ecommerce.used_good.security.handler.AuthenticationFailureHandlerImpl;
+import com.ecommerce.used_good.security.handler.AuthenticationSuccessHandlerImpl;
+import com.ecommerce.used_good.security.handler.LogoutSuccessHandlerImpl;
+
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
     @Autowired
     UserDetailsServiceImpl userDetailsServiceImpl;
+
+    @Autowired
+	private AuthenticationEntryPointImpl authenticationEntryPointImpl;
+	@Autowired
+	private AccessDeniedHandlerImpl accessDeniedHandlerImpl;
+	@Autowired
+	private AuthenticationSuccessHandlerImpl authenticationSuccessHandlerImpl;
+	@Autowired
+	private AuthenticationFailureHandlerImpl authenticationFailureHandlerImpl;
+	@Autowired
+	private LogoutSuccessHandlerImpl logoutSuccessHandlerImpl;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception 
@@ -24,8 +41,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         http.authorizeRequests((requests) -> requests
                                             .anyRequest()
                                             .permitAll());
+
+        http.exceptionHandling()
+			.accessDeniedHandler(accessDeniedHandlerImpl)
+			.authenticationEntryPoint(authenticationEntryPointImpl); //this handler will make default login page disable
 		
-        http.formLogin();
+        http.formLogin()
+            .usernameParameter("username")
+            .passwordParameter("password")
+            .successHandler(authenticationSuccessHandlerImpl)
+            .failureHandler(authenticationFailureHandlerImpl);
+
+        http.logout()
+            .permitAll()
+            .logoutUrl("/logout")
+            .logoutSuccessHandler(logoutSuccessHandlerImpl);
+
 		http.httpBasic();
     }
 
