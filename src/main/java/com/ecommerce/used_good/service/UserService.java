@@ -84,8 +84,6 @@ public class UserService
 
         if(success)
         {
-            dbUser.setId(originId);
-
             if(targetUser.getPassword() != null)
                 dbUser.setPassword(sha256PasswordEncoder.encode(targetUser.getPassword()));
 

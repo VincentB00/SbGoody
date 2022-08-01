@@ -1,6 +1,8 @@
 package com.ecommerce.used_good.util;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+
 
 public final class ReplacementUtils 
 {
@@ -30,7 +32,7 @@ public final class ReplacementUtils
                 // Object originalValue = originalFields[i].get(original);
                 Object targetValue = targetFields[i].get(target);
 
-                if(targetValue != null)
+                if(targetValue != null && validAnotation(targetFields[i].getAnnotations()))
                     originalFields[i].set(original, targetValue);
 
                 originalFields[i].setAccessible(false);
@@ -44,6 +46,15 @@ public final class ReplacementUtils
             ex.printStackTrace();
             return false;
         }
-        
+    }
+
+    private static boolean validAnotation(Annotation[] annotations)
+    {
+        for (Annotation annotation : annotations) 
+        {
+            if(annotation.annotationType() == javax.persistence.Id.class)
+                return false;
+        }
+        return true;
     }
 }
