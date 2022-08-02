@@ -29,7 +29,4 @@ public class Sha256PasswordEncoder implements PasswordEncoder
     {
         return DigestUtils.sha256Hex(rawPassword.toString()).equals(encodedPassword);
     }
-
-    
-    
 }
