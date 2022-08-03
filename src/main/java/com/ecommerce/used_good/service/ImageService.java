@@ -9,7 +9,7 @@ import com.ecommerce.used_good.dao.ImageDao;
 public class ImageService 
 {
     @Autowired
-    ImageDao imageDao;
+    private ImageDao imageDao;
 
     public void deleteByUrl(String url)
     {

@@ -2,6 +2,7 @@ package com.ecommerce.used_good.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.ecommerce.used_good.bean.User;
 import com.ecommerce.used_good.dao.CategoryDao;
 import com.ecommerce.used_good.dao.ImageDao;
 import com.ecommerce.used_good.dao.ItemDao;
+import com.ecommerce.used_good.http.HttpResponseThrowers;
 import com.ecommerce.used_good.http.Response;
 import com.ecommerce.used_good.util.ReplacementUtils;
 
@@ -31,6 +33,16 @@ public class ItemService
     public List<Item> getAllItems()
     {
         return itemDao.findAll();
+    }
+
+    public Item getItem(int id)
+    {
+        Optional<Item> item = itemDao.findById(id);
+        
+        if(!item.isPresent())
+            HttpResponseThrowers.throwBadRequest("invalid/missing item id");
+
+        return item.get();
     }
 
     public Response createItem(Item item, User user)
@@ -118,8 +130,6 @@ public class ItemService
             }
         }
 
-        
-
         for(Image image : images)
         {
             image.setItem(originalItem);
@@ -127,16 +137,13 @@ public class ItemService
             imageDao.save(image);
         }
 
-        imageDao.flush();
-        itemDao.flush();
-        categoryDao.flush();
+        List<Integer> deleteImageIDs = new ArrayList<>();
 
         for(Image image : originalItem.getImages())
         {
             if(!images.parallelStream().anyMatch((i) -> i.getUrl().equals(image.getUrl())))
             {
-                System.out.println(image);
-                imageDao.deleteById(image.getId());
+                deleteImageIDs.add(image.getId());
             }
         }
 
@@ -146,7 +153,14 @@ public class ItemService
 
         itemDao.save(originalItem);
 
-        
+        imageDao.flush();
+        itemDao.flush();
+        categoryDao.flush();
+
+        for(int id: deleteImageIDs)
+        {
+            imageDao.deleteById(id);
+        }
 
         return new Response(true);
     }
@@ -158,6 +172,26 @@ public class ItemService
         if(item != null)
             return this.modifyItem(item, targetItem);
         else
-            return new Response(false, "Invalid origin item");
+        {
+            return (Response) HttpResponseThrowers.throwBadRequest("Invalid origin item");
+        }
+    }
+
+    public boolean isOwner(Item item, User user)
+    {
+        if(item == null)
+            return false;
+        else
+            return item.getUser().getId() == user.getId();
+    }
+
+    public boolean isOwner(int itemID, User user)
+    {
+        Optional<Item> optional = itemDao.findById(itemID);
+
+        if(!optional.isPresent())
+            HttpResponseThrowers.throwBadRequest("invalid/missing item id");
+
+        return isOwner(optional.get(), user);
     }
 }

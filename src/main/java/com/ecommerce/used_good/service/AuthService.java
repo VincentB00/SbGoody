@@ -15,7 +15,8 @@ public class AuthService
     @Autowired
     UserDao userDao;
 
-    public Response isLogin(Authentication authentication) {
+    public Response isLogin(Authentication authentication) 
+    {
 		if (authentication != null) {
 			Response response = new AuthenticationSuccessResponse(true, 200, "Logged In!", userDao.findByUsername(authentication.getName()));
 			return response;
