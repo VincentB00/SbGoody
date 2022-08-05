@@ -19,7 +19,7 @@ public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception)
 			throws IOException, ServletException {
-		SecurityUtils.sendResponse(response, HttpServletResponse.SC_OK, "Authentication failed", exception);
+		SecurityUtils.sendResponse(response, HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed", exception);
 	}
 
 }

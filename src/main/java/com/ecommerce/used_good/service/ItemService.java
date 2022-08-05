@@ -8,11 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ecommerce.used_good.bean.Category;
-import com.ecommerce.used_good.bean.Image;
 import com.ecommerce.used_good.bean.Item;
 import com.ecommerce.used_good.bean.User;
 import com.ecommerce.used_good.dao.CategoryDao;
-import com.ecommerce.used_good.dao.ImageDao;
 import com.ecommerce.used_good.dao.ItemDao;
 import com.ecommerce.used_good.http.HttpResponseThrowers;
 import com.ecommerce.used_good.http.Response;
@@ -23,9 +21,6 @@ public class ItemService
 {
     @Autowired
     private ItemDao itemDao;
-
-    @Autowired
-    private ImageDao imageDao;
 
     @Autowired
     private CategoryDao categoryDao;
@@ -40,12 +35,12 @@ public class ItemService
         Optional<Item> item = itemDao.findById(id);
         
         if(!item.isPresent())
-            HttpResponseThrowers.throwBadRequest("invalid/missing item id");
+            HttpResponseThrowers.throwBadRequest("invalid or missing item id");
 
         return item.get();
     }
 
-    public Response createItem(Item item, User user)
+    public Item createItem(Item item, User user)
     {
         List<Category> categories = new ArrayList<>();
         for (Category categoryT : item.getCategories()) 
@@ -63,37 +58,12 @@ public class ItemService
             }
         }
 
-        List<Image> images = new ArrayList<>();
-        for(Image imageT : item.getImages())
-        {
-            Image image = imageDao.findByUrl(imageT.getUrl());
-            
-            if(image != null)
-            {
-                images.add(image);
-            }
-            else
-            {
-                image = imageDao.save(imageT);
-                images.add(image);
-            }
-        }
-
         item.setCategories(categories);
-        item.setImages(images);
         item.setUser(user);
 
-        System.out.println(item);
         item = itemDao.save(item);
-        
-        for(Image image : images)
-        {
-            image.setItem(item);
 
-            imageDao.save(image);
-        }
-
-        return new Response(true);
+        return item;
     }
 
     public Response modifyItem(Item originalItem, Item targetItem)
@@ -114,55 +84,12 @@ public class ItemService
             }
         }
 
-        List<Image> images = new ArrayList<>();
-        for(Image imageT : targetItem.getImages())
-        {
-            Image image = imageDao.findByUrl(imageT.getUrl());
-            
-            if(image != null)
-            {
-                images.add(image);
-            }
-            else
-            {
-                image = imageDao.save(imageT);
-                images.add(image);
-            }
-        }
-
-        for(Image image : images)
-        {
-            image.setItem(originalItem);
-
-            imageDao.save(image);
-        }
-
-        List<Integer> deleteImageIDs = new ArrayList<>();
-
-        for(Image image : originalItem.getImages())
-        {
-            if(!images.parallelStream().anyMatch((i) -> i.getUrl().equals(image.getUrl())))
-            {
-                deleteImageIDs.add(image.getId());
-            }
-        }
-
         ReplacementUtils.replaceValue(originalItem, targetItem);
-        originalItem.setImages(images);
         originalItem.setCategories(categories);
 
         itemDao.save(originalItem);
 
-        imageDao.flush();
-        itemDao.flush();
-        categoryDao.flush();
-
-        for(int id: deleteImageIDs)
-        {
-            imageDao.deleteById(id);
-        }
-
-        return new Response(true);
+        return new Response(true, "item modify success");
     }
 
     public Response modifyItem(int originalItemID, Item targetItem)
@@ -187,11 +114,18 @@ public class ItemService
 
     public boolean isOwner(int itemID, User user)
     {
-        Optional<Item> optional = itemDao.findById(itemID);
+        return isOwner(this.getItem(itemID), user);
+    }
 
-        if(!optional.isPresent())
-            HttpResponseThrowers.throwBadRequest("invalid/missing item id");
+    public void checkIsOwner(int itemID, User user)
+    {
+        if(!isOwner(itemID, user))
+            HttpResponseThrowers.throwBadRequest("Item does not belong to user");
+    }
 
-        return isOwner(optional.get(), user);
+    public Response deleteById(int id)
+    {
+        this.itemDao.deleteById(id);
+        return new Response(true, "Delete item: " + id + " success");
     }
 }

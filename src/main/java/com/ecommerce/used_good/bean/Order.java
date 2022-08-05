@@ -11,8 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -26,49 +24,65 @@ public class Order
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
-    private User user;
-
     @Column
     private double price;
-
-    @Column
-    private double shipping_price;
 
     @Column
     private int quantity;
 
     @Column
-    private String shipping_tag;
+    private double shipping_price;
+
+    @Column(name = "shipping_label")
+    private String shippingLabel;
+
+    @Column
+    private String shipping_address;
+
+    @Column
+    private String shipping_city;
+    
+    @Column
+    private String shipping_state;
+    
+    @Column
+    private String shipping_zip;
+    
+    @Column
+    private String current_shipping_location;
+    
+    @Column
+    private String status;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private Date purchase_date;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JoinTable(name = "purchase",
-        joinColumns = {
-            @JoinColumn(name = "order_id", referencedColumnName = "id")
-        },
-        inverseJoinColumns = {
-            @JoinColumn(name = "item_id", referencedColumnName = "id")
-        }
-    )
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    private User user;
 
     public Order() {
     }
 
-    public Order(int id, User user, double price, double shipping_price, int quantity, String shipping_tag, Date purchase_date, Item item) {
+    public Order(int id, double price, int quantity, double shipping_price, String shippingLabel, String shipping_address, String shipping_city, String shipping_state, String shipping_zip, String current_shipping_location, String status, Date purchase_date, Item item, User user) {
         this.id = id;
-        this.user = user;
         this.price = price;
-        this.shipping_price = shipping_price;
         this.quantity = quantity;
-        this.shipping_tag = shipping_tag;
+        this.shipping_price = shipping_price;
+        this.shippingLabel = shippingLabel;
+        this.shipping_address = shipping_address;
+        this.shipping_city = shipping_city;
+        this.shipping_state = shipping_state;
+        this.shipping_zip = shipping_zip;
+        this.current_shipping_location = current_shipping_location;
+        this.status = status;
         this.purchase_date = purchase_date;
         this.item = item;
+        this.user = user;
     }
 
     public int getId() {
@@ -79,28 +93,12 @@ public class Order
         this.id = id;
     }
 
-    public User getUser() {
-        return this.user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
     public double getPrice() {
         return this.price;
     }
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public double getShipping_price() {
-        return this.shipping_price;
-    }
-
-    public void setShipping_price(double shipping_price) {
-        this.shipping_price = shipping_price;
     }
 
     public int getQuantity() {
@@ -111,12 +109,68 @@ public class Order
         this.quantity = quantity;
     }
 
-    public String getShipping_tag() {
-        return this.shipping_tag;
+    public double getShipping_price() {
+        return this.shipping_price;
     }
 
-    public void setShipping_tag(String shipping_tag) {
-        this.shipping_tag = shipping_tag;
+    public void setShipping_price(double shipping_price) {
+        this.shipping_price = shipping_price;
+    }
+
+    public String getShippingLabel() {
+        return this.shippingLabel;
+    }
+
+    public void setShippingLabel(String shippingLabel) {
+        this.shippingLabel = shippingLabel;
+    }
+
+    public String getShipping_address() {
+        return this.shipping_address;
+    }
+
+    public void setShipping_address(String shipping_address) {
+        this.shipping_address = shipping_address;
+    }
+
+    public String getShipping_city() {
+        return this.shipping_city;
+    }
+
+    public void setShipping_city(String shipping_city) {
+        this.shipping_city = shipping_city;
+    }
+
+    public String getShipping_state() {
+        return this.shipping_state;
+    }
+
+    public void setShipping_state(String shipping_state) {
+        this.shipping_state = shipping_state;
+    }
+
+    public String getShipping_zip() {
+        return this.shipping_zip;
+    }
+
+    public void setShipping_zip(String shipping_zip) {
+        this.shipping_zip = shipping_zip;
+    }
+
+    public String getCurrent_shipping_location() {
+        return this.current_shipping_location;
+    }
+
+    public void setCurrent_shipping_location(String current_shipping_location) {
+        this.current_shipping_location = current_shipping_location;
+    }
+
+    public String getStatus() {
+        return this.status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Date getPurchase_date() {
@@ -135,13 +189,16 @@ public class Order
         this.item = item;
     }
 
-    public Order id(int id) {
-        setId(id);
-        return this;
+    public User getUser() {
+        return this.user;
     }
 
-    public Order user(User user) {
-        setUser(user);
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Order id(int id) {
+        setId(id);
         return this;
     }
 
@@ -150,18 +207,48 @@ public class Order
         return this;
     }
 
-    public Order shipping_price(double shipping_price) {
-        setShipping_price(shipping_price);
-        return this;
-    }
-
     public Order quantity(int quantity) {
         setQuantity(quantity);
         return this;
     }
 
-    public Order shipping_tag(String shipping_tag) {
-        setShipping_tag(shipping_tag);
+    public Order shipping_price(double shipping_price) {
+        setShipping_price(shipping_price);
+        return this;
+    }
+
+    public Order shippingLabel(String shippingLabel) {
+        setShippingLabel(shippingLabel);
+        return this;
+    }
+
+    public Order shipping_address(String shipping_address) {
+        setShipping_address(shipping_address);
+        return this;
+    }
+
+    public Order shipping_city(String shipping_city) {
+        setShipping_city(shipping_city);
+        return this;
+    }
+
+    public Order shipping_state(String shipping_state) {
+        setShipping_state(shipping_state);
+        return this;
+    }
+
+    public Order shipping_zip(String shipping_zip) {
+        setShipping_zip(shipping_zip);
+        return this;
+    }
+
+    public Order current_shipping_location(String current_shipping_location) {
+        setCurrent_shipping_location(current_shipping_location);
+        return this;
+    }
+
+    public Order status(String status) {
+        setStatus(status);
         return this;
     }
 
@@ -175,6 +262,11 @@ public class Order
         return this;
     }
 
+    public Order user(User user) {
+        setUser(user);
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -183,26 +275,31 @@ public class Order
             return false;
         }
         Order order = (Order) o;
-        return id == order.id && Objects.equals(user, order.user) && price == order.price && shipping_price == order.shipping_price && quantity == order.quantity && Objects.equals(shipping_tag, order.shipping_tag) && Objects.equals(purchase_date, order.purchase_date) && Objects.equals(item, order.item);
+        return id == order.id && price == order.price && quantity == order.quantity && shipping_price == order.shipping_price && Objects.equals(shippingLabel, order.shippingLabel) && Objects.equals(shipping_address, order.shipping_address) && Objects.equals(shipping_city, order.shipping_city) && Objects.equals(shipping_state, order.shipping_state) && Objects.equals(shipping_zip, order.shipping_zip) && Objects.equals(current_shipping_location, order.current_shipping_location) && Objects.equals(status, order.status) && Objects.equals(purchase_date, order.purchase_date) && Objects.equals(item, order.item) && Objects.equals(user, order.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, price, shipping_price, quantity, shipping_tag, purchase_date, item);
+        return Objects.hash(id, price, quantity, shipping_price, shippingLabel, shipping_address, shipping_city, shipping_state, shipping_zip, current_shipping_location, status, purchase_date, item, user);
     }
 
     @Override
     public String toString() {
         return "{" +
             " id='" + getId() + "'" +
-            ", user='" + getUser() + "'" +
             ", price='" + getPrice() + "'" +
-            ", shipping_price='" + getShipping_price() + "'" +
             ", quantity='" + getQuantity() + "'" +
-            ", shipping_tag='" + getShipping_tag() + "'" +
+            ", shipping_price='" + getShipping_price() + "'" +
+            ", shippingLabel='" + getShippingLabel() + "'" +
+            ", shipping_address='" + getShipping_address() + "'" +
+            ", shipping_city='" + getShipping_city() + "'" +
+            ", shipping_state='" + getShipping_state() + "'" +
+            ", shipping_zip='" + getShipping_zip() + "'" +
+            ", current_shipping_location='" + getCurrent_shipping_location() + "'" +
+            ", status='" + getStatus() + "'" +
             ", purchase_date='" + getPurchase_date() + "'" +
             ", item='" + getItem() + "'" +
+            ", user='" + getUser() + "'" +
             "}";
     }
-
 }

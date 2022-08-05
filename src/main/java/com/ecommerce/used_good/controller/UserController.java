@@ -2,6 +2,7 @@ package com.ecommerce.used_good.controller;
 
 import java.util.List;
 
+import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import com.ecommerce.used_good.bean.User;
 import com.ecommerce.used_good.http.Response;
 import com.ecommerce.used_good.service.AuthService;
 import com.ecommerce.used_good.service.UserService;
+import com.ecommerce.used_good.util.ConstantType;
 import com.ecommerce.used_good.util.SecurityUtils;
 
 @RestController
@@ -31,7 +33,7 @@ public class UserController
     @Autowired
     AuthService authService;
 
-    @PreAuthorize("hasAnyAuthority('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('" + ConstantType.USER_ROLE_OWNER + "', '" + ConstantType.USER_ROLE_ADMIN + "')")
     @GetMapping("all")
     public List<User> getAllUser()
     {
@@ -39,6 +41,7 @@ public class UserController
     }
 
     @GetMapping
+    @PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
     public User getCurrentLoginUser(HttpServletResponse response, Authentication authentication)
     {
         User user = authService.getCurrentLoginUser(authentication);
@@ -73,6 +76,7 @@ public class UserController
     }
 
     @PutMapping
+    @PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
     public Response modifyCurrentUser(HttpServletResponse response, Authentication authentication, @RequestBody User user)
     {
         User loginUser = authService.getCurrentLoginUser(authentication);
@@ -83,7 +87,7 @@ public class UserController
         return new Response(userService.modifyUser(loginUser, user));
     }
 
-    @PreAuthorize("hasAnyAuthority('OWNER', 'ADMIN')")
+    @PreAuthorize("hasAnyAuthority('" + ConstantType.USER_ROLE_OWNER + "', '" + ConstantType.USER_ROLE_ADMIN + "')")
     @PutMapping("/{id}")
     public Response modifyUser(@PathVariable int id, @RequestBody User user)
     {

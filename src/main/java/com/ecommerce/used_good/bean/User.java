@@ -64,15 +64,17 @@ public class User implements UserDetails
     )
     private List<UserRole> userRoles;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    private List<Item> items;
+    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
+    // private List<Item> items;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private Date create_time;
 
+    public User() {
+    }
 
-    public User(int id, String username, String password, String first_name, String last_name, String middle_name, String email, String status, List<UserRole> userRoles, List<Item> items, Date create_time) {
+    public User(int id, String username, String password, String first_name, String last_name, String middle_name, String email, String status, List<UserRole> userRoles, Date create_time) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -82,37 +84,6 @@ public class User implements UserDetails
         this.email = email;
         this.status = status;
         this.userRoles = userRoles;
-        this.items = items;
-        this.create_time = create_time;
-    }
-
-    public List<Item> getItems() {
-        return this.items;
-    }
-
-    public void setItems(List<Item> items) {
-        this.items = items;
-    }
-
-    public User items(List<Item> items) {
-        setItems(items);
-        return this;
-    }
-
-
-    public User() {
-    }
-
-    public User(int id, String username, String password, String first_name, String last_name, String middle_name, String email, String status, List<UserRole> userRoleList, Date create_time) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.first_name = first_name;
-        this.last_name = last_name;
-        this.middle_name = middle_name;
-        this.email = email;
-        this.status = status;
-        this.userRoles = userRoleList;
         this.create_time = create_time;
     }
 
@@ -277,6 +248,7 @@ public class User implements UserDetails
             ", create_time='" + getCreate_time() + "'" +
             "}";
     }
+    
     
     
     @Override

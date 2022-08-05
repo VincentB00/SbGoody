@@ -68,7 +68,7 @@ public class Item
     
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonIgnore
+    // @JsonIgnore
     private User user;
 
     @Column

@@ -3,6 +3,12 @@ package com.ecommerce.used_good.util;
 public final class ConstantType 
 {
     //USER
+    public static final String USER_ROLE_NORMAL = "NORMAL";
+    public static final String USER_ROLE_ADMIN = "ADMIN";
+    public static final String USER_ROLE_OWNER = "OWNER";
+
+    public static final String HAS_ANY_ALL_AUTHORITY = "hasAnyAuthority('NORMAL', 'OWNER', 'ADMIN')";
+
     public static final String USER_STATUS_NORMAL = "NORMAL";
     public static final String USER_STATUS_LOCK = "LOCK";
 
@@ -12,4 +18,21 @@ public final class ConstantType
 
     //offer
     public static final String OFFER_STATUS_PEDNING = "PENDING";
+
+    //SHIPPING
+    public static final String SHIPPING_STATUS_PEDNING = "PENDING";
+
+
+    public static final String BUCKET_NAME = "aws-vincent-frontend-demo";
+
+    // public static String hasAnyAthority()
+    // {
+    //     StringBuilder stringBuilder = new StringBuilder();
+    //     stringBuilder.append("hasAnyAuthority(");
+    //     stringBuilder.append(String.format("'%s'", USER_ROLE_NORMAL));
+    //     stringBuilder.append(String.format("'%s'", USER_ROLE_ADMIN));
+    //     stringBuilder.append(String.format("'%s'", USER_ROLE_ADMIN));
+    //     stringBuilder.append(")");
+    //     return stringBuilder.toString();
+    // }
 }

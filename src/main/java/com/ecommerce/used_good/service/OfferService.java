@@ -32,6 +32,15 @@ public class OfferService
         return offerDao.getAllByItemID(itemID);
     }
 
+    public Offer getById(int id)
+    {
+        Optional<Offer> optional = offerDao.findById(id);
+        if(!optional.isPresent())
+            HttpResponseThrowers.throwBadRequest("invalid or missing offer id");
+
+        return optional.get();
+    }
+
     public Response createOffer(User user, Item item, Offer offer)
     {
         offer.setItem(item);
@@ -81,5 +90,26 @@ public class OfferService
         offerDao.save(origin);
 
         return new Response(true);
+    }
+
+    public boolean isOwnOffer(Offer offer, User user)
+    {
+        return offer.getUser().getId() == user.getId();
+    }
+
+    public boolean isOwnOffer(int offerID, User user)
+    {
+        Optional<Offer> optional = offerDao.findById(offerID);
+
+        if(!optional.isPresent())
+            HttpResponseThrowers.throwBadRequest("invalid or missing offer id");
+
+        return isOwnOffer(optional.get(), user);
+    }
+
+    public void checkOwnOffer(Offer offer, User user)
+    {
+        if(!isOwnOffer(offer, user))
+            HttpResponseThrowers.throwForbidden("Offer does not belong to user");
     }
 }
