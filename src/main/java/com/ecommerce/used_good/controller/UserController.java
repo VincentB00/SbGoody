@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,11 +18,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.used_good.bean.User;
+import com.ecommerce.used_good.http.HttpResponseThrowers;
 import com.ecommerce.used_good.http.Response;
 import com.ecommerce.used_good.service.AuthService;
 import com.ecommerce.used_good.service.UserService;
 import com.ecommerce.used_good.util.ConstantType;
 import com.ecommerce.used_good.util.SecurityUtils;
+
+import io.netty.handler.codec.http.HttpRequest;
 
 @RestController
 @RequestMapping("/users")
@@ -58,7 +62,7 @@ public class UserController
         if(userService.isUsernameExist(username))
             return new Response(true, "username already exist");
         else
-            return new Response(true, 400, "username does not exist");
+            return (Response) HttpResponseThrowers.throwBadRequest("username does not exist");
     }
 
     @PostMapping
@@ -71,7 +75,8 @@ public class UserController
         else
         {
             userService.registerUser(user);
-            return new Response(true);
+            response.setStatus(201);
+            return new Response(true, 201, "new User created");
         }
     }
 

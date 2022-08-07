@@ -19,7 +19,7 @@ public class AuthenticationFailureHandlerImpl extends SimpleUrlAuthenticationFai
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
 			AuthenticationException exception) throws IOException, ServletException {
-		SecurityUtils.sendResponse(response, HttpServletResponse.SC_OK, "Login failed", exception);
+		SecurityUtils.sendResponse(response, HttpServletResponse.SC_BAD_REQUEST, "Login failed", exception);
 	}
 
 }

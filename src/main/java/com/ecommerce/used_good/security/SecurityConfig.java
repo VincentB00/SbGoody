@@ -1,5 +1,7 @@
 package com.ecommerce.used_good.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -8,12 +10,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.ecommerce.used_good.security.handler.AccessDeniedHandlerImpl;
 import com.ecommerce.used_good.security.handler.AuthenticationEntryPointImpl;
 import com.ecommerce.used_good.security.handler.AuthenticationFailureHandlerImpl;
 import com.ecommerce.used_good.security.handler.AuthenticationSuccessHandlerImpl;
 import com.ecommerce.used_good.security.handler.LogoutSuccessHandlerImpl;
+import com.ecommerce.used_good.util.ConstantType;
 
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 @EnableWebSecurity
@@ -37,6 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     protected void configure(HttpSecurity http) throws Exception 
     {
         http.csrf().disable();
+
+        http.cors();
         
         http.authorizeRequests((requests) -> requests
                                             .anyRequest()
@@ -71,4 +79,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     {
 		auth.userDetailsService(userDetailsServiceImpl).passwordEncoder(new Sha256PasswordEncoder());
 	}
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() 
+    {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(ConstantType.ACCESS_CONTROL_ALLOW_ORIGIN));
+        configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Origin", "X-Requested-With", "Content-Type", "Accept"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 }

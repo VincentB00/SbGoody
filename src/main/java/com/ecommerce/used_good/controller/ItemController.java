@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -73,10 +74,9 @@ public class ItemController
 
     @PutMapping("{itemID}")
     @PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
-    public Response modifyItem(@PathVariable int itemID, @RequestBody Item item, HttpServletResponse res)
+    public Response modifyItem(@PathVariable int itemID, @RequestBody Item item)
     {
         Response response = this.itemService.modifyItem(itemID, item);
-        res.setStatus(response.getCode());
         return response;
     }
 

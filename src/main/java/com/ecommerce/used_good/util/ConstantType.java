@@ -2,6 +2,9 @@ package com.ecommerce.used_good.util;
 
 public final class ConstantType 
 {
+    //CORS
+    public static final String ACCESS_CONTROL_ALLOW_ORIGIN = "http://localhost:4200";
+
     //USER
     public static final String USER_ROLE_NORMAL = "NORMAL";
     public static final String USER_ROLE_ADMIN = "ADMIN";

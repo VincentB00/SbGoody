@@ -3,7 +3,7 @@ package com.ecommerce.used_good.http;
 public class Response {
 
     private boolean success;
-    private int code;
+    private int status;
     private String message;
 
     public Response() {
@@ -13,21 +13,21 @@ public class Response {
     public Response(boolean success) {
         super();
         this.success = success;
-        this.code = success ? 200 : 400;
+        this.status = success ? 200 : 400;
         this.message = "";
     }
 
     public Response(boolean success, String message) {
         super();
         this.success = success;
-        this.code = success ? 200 : 400;
+        this.status = success ? 200 : 400;
         this.message = message;
     }
 
     public Response(boolean success, int code, String message) {
         super();
         this.success = success;
-        this.code = code;
+        this.status = code;
         this.message = message;
     }
 
@@ -39,12 +39,12 @@ public class Response {
         this.success = success;
     }
 
-    public int getCode() {
-        return code;
+    public int getStatus() {
+        return status;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setStatus(int code) {
+        this.status = code;
     }
 
     public String getMessage() {
@@ -57,7 +57,7 @@ public class Response {
 
     @Override
     public String toString() {
-        return "Response [success=" + success + ", code=" + code + ", message=" + message + "]";
+        return "Response [success=" + success + ", code=" + status + ", message=" + message + "]";
     }
 
 }
