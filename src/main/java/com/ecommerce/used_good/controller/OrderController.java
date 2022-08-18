@@ -19,6 +19,7 @@ import com.ecommerce.used_good.bean.User;
 import com.ecommerce.used_good.http.Response;
 import com.ecommerce.used_good.service.AuthService;
 import com.ecommerce.used_good.service.ItemService;
+import com.ecommerce.used_good.service.MailService;
 import com.ecommerce.used_good.service.OfferService;
 import com.ecommerce.used_good.service.OrderService;
 import com.ecommerce.used_good.util.ConstantType;
@@ -38,7 +39,7 @@ public class OrderController
     private AuthService authService;
 
     @Autowired
-    private ItemService itemService;
+    private MailService mailService;
 
     @GetMapping("/is_related/{orderID}")
     public Response isRelated(@PathVariable int orderID, Authentication authentication)
@@ -76,6 +77,10 @@ public class OrderController
 
         offerService.checkOwnOffer(offer, user);
 
-        return orderService.createOrder(offer, shipping, user);
+        Order order = orderService.createOrder(offer, shipping, user);
+
+        this.mailService.sendOrderHaveBeenPlaceEmail(order.getId());
+
+        return new Response(true, "An order have been place");
     }
 }

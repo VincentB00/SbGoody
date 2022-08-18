@@ -40,9 +40,6 @@ public class OrderService
     @Autowired
     private ItemDao itemDao;
 
-    @Autowired
-    private MailService mailService;
-
     public Order getOrder(int orderID)
     {
         Optional<Order> optional = this.orderDao.findById(orderID);
@@ -63,7 +60,7 @@ public class OrderService
         return this.orderDao.getAllSellingOrder(userID);
     }
 
-    public Response createOrder(Offer offer, Shipping shipping, User user)
+    public Order createOrder(Offer offer, Shipping shipping, User user)
     {
         String shippingLabel = createShippingLabel(offer);
 
@@ -94,9 +91,7 @@ public class OrderService
         item.setStock(item.getStock() - 1);
         itemDao.save(item);
 
-        this.mailService.sendOrderHaveBeenPlaceEmail(order.getId());
-
-        return new Response(true, "Order created with Shipping Label: " + shippingLabel);
+        return order;
     }    
 
     public String createShippingLabel(Offer offer)
