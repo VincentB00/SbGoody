@@ -21,6 +21,7 @@ public final class ConstantType
 
     //offer
     public static final String OFFER_STATUS_PEDNING = "PENDING";
+    public static final String OFFER_STATUS_FULLFILLED = "FULLFILLED";
 
     //SHIPPING
     public static final String SHIPPING_STATUS_PEDNING = "PENDING";

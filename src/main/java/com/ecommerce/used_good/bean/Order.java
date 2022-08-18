@@ -17,7 +17,7 @@ import javax.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
-@Table(name = "order")
+@Table(name = "item_order")
 public class Order 
 {
     @Id
@@ -29,6 +29,15 @@ public class Order
 
     @Column
     private int quantity;
+
+    @Column
+    private double total;
+
+    @Column
+    private String reciever_name;
+
+    @Column
+    private String phone_number;
 
     @Column
     private double shipping_price;
@@ -62,16 +71,21 @@ public class Order
     @JoinColumn(name = "item_id", referencedColumnName = "id")
     private Item item;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     private User user;
+
+
 
     public Order() {
     }
 
-    public Order(int id, double price, int quantity, double shipping_price, String shippingLabel, String shipping_address, String shipping_city, String shipping_state, String shipping_zip, String current_shipping_location, String status, Date purchase_date, Item item, User user) {
+    public Order(int id, double price, int quantity, int total, String reciever_name, String phone_number, double shipping_price, String shippingLabel, String shipping_address, String shipping_city, String shipping_state, String shipping_zip, String current_shipping_location, String status, Date purchase_date, Item item, User user) {
         this.id = id;
         this.price = price;
         this.quantity = quantity;
+        this.total = total;
+        this.reciever_name = reciever_name;
+        this.phone_number = phone_number;
         this.shipping_price = shipping_price;
         this.shippingLabel = shippingLabel;
         this.shipping_address = shipping_address;
@@ -83,6 +97,20 @@ public class Order
         this.purchase_date = purchase_date;
         this.item = item;
         this.user = user;
+    }
+
+
+    public double getTotal() {
+        return this.total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
+    }
+    
+    public Order total(double total) {
+        setTotal(total);
+        return this;
     }
 
     public int getId() {
@@ -107,6 +135,22 @@ public class Order
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getReciever_name() {
+        return this.reciever_name;
+    }
+
+    public void setReciever_name(String reciever_name) {
+        this.reciever_name = reciever_name;
+    }
+
+    public String getPhone_number() {
+        return this.phone_number;
+    }
+
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 
     public double getShipping_price() {
@@ -173,8 +217,8 @@ public class Order
         this.status = status;
     }
 
-    public Date getPurchase_date() {
-        return this.purchase_date;
+    public String getPurchase_date() {
+        return this.purchase_date.toString();
     }
 
     public void setPurchase_date(Date purchase_date) {
@@ -209,6 +253,16 @@ public class Order
 
     public Order quantity(int quantity) {
         setQuantity(quantity);
+        return this;
+    }
+
+    public Order reciever_name(String reciever_name) {
+        setReciever_name(reciever_name);
+        return this;
+    }
+
+    public Order phone_number(String phone_number) {
+        setPhone_number(phone_number);
         return this;
     }
 
@@ -267,6 +321,7 @@ public class Order
         return this;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o == this)
@@ -275,12 +330,12 @@ public class Order
             return false;
         }
         Order order = (Order) o;
-        return id == order.id && price == order.price && quantity == order.quantity && shipping_price == order.shipping_price && Objects.equals(shippingLabel, order.shippingLabel) && Objects.equals(shipping_address, order.shipping_address) && Objects.equals(shipping_city, order.shipping_city) && Objects.equals(shipping_state, order.shipping_state) && Objects.equals(shipping_zip, order.shipping_zip) && Objects.equals(current_shipping_location, order.current_shipping_location) && Objects.equals(status, order.status) && Objects.equals(purchase_date, order.purchase_date) && Objects.equals(item, order.item) && Objects.equals(user, order.user);
+        return id == order.id && price == order.price && quantity == order.quantity && total == order.total && Objects.equals(reciever_name, order.reciever_name) && Objects.equals(phone_number, order.phone_number) && shipping_price == order.shipping_price && Objects.equals(shippingLabel, order.shippingLabel) && Objects.equals(shipping_address, order.shipping_address) && Objects.equals(shipping_city, order.shipping_city) && Objects.equals(shipping_state, order.shipping_state) && Objects.equals(shipping_zip, order.shipping_zip) && Objects.equals(current_shipping_location, order.current_shipping_location) && Objects.equals(status, order.status) && Objects.equals(purchase_date, order.purchase_date) && Objects.equals(item, order.item) && Objects.equals(user, order.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, price, quantity, shipping_price, shippingLabel, shipping_address, shipping_city, shipping_state, shipping_zip, current_shipping_location, status, purchase_date, item, user);
+        return Objects.hash(id, price, quantity, total, reciever_name, phone_number, shipping_price, shippingLabel, shipping_address, shipping_city, shipping_state, shipping_zip, current_shipping_location, status, purchase_date, item, user);
     }
 
     @Override
@@ -289,6 +344,9 @@ public class Order
             " id='" + getId() + "'" +
             ", price='" + getPrice() + "'" +
             ", quantity='" + getQuantity() + "'" +
+            ", total='" + getTotal() + "'" +
+            ", reciever_name='" + getReciever_name() + "'" +
+            ", phone_number='" + getPhone_number() + "'" +
             ", shipping_price='" + getShipping_price() + "'" +
             ", shippingLabel='" + getShippingLabel() + "'" +
             ", shipping_address='" + getShipping_address() + "'" +

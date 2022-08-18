@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -15,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -63,7 +63,7 @@ public class User implements UserDetails
             @JoinColumn(name = "user_role_id", referencedColumnName = "id")
         }        
     )
-    private List<UserRole> userRoles;
+    private Set<UserRole> userRoles;
 
     // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
     // private List<Item> items;
@@ -75,7 +75,8 @@ public class User implements UserDetails
     public User() {
     }
 
-    public User(int id, String username, String password, String first_name, String last_name, String middle_name, String email, String status, List<UserRole> userRoles, Date create_time) {
+
+    public User(int id, String username, String password, String first_name, String last_name, String middle_name, String email, String status, Set<UserRole> userRoles, Date create_time) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -87,6 +88,7 @@ public class User implements UserDetails
         this.userRoles = userRoles;
         this.create_time = create_time;
     }
+    
 
     public int getId() {
         return this.id;
@@ -152,16 +154,18 @@ public class User implements UserDetails
         this.status = status;
     }
 
-    public List<UserRole> getUserRoles() {
+
+    public Set<UserRole> getUserRoles() {
         return this.userRoles;
     }
 
-    public void setUserRoles(List<UserRole> userRoles) {
+    public void setUserRoles(Set<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
+    
 
-    public Date getCreate_time() {
-        return this.create_time;
+    public String getCreate_time() {
+        return this.create_time.toString();
     }
 
     public void setCreate_time(Date create_time) {
@@ -208,10 +212,12 @@ public class User implements UserDetails
         return this;
     }
 
-    public User userRoles(List<UserRole> userRoles) {
+
+    public User userRoles(Set<UserRole> userRoles) {
         setUserRoles(userRoles);
         return this;
     }
+    
 
     public User create_time(Date create_time) {
         setCreate_time(create_time);

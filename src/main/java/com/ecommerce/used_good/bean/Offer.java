@@ -11,13 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.ecommerce.used_good.util.ConstantType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "offer")
@@ -27,7 +25,7 @@ public class Offer
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     private Item item;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
@@ -45,7 +43,7 @@ public class Offer
     @Column
     private String status = ConstantType.OFFER_STATUS_PEDNING;
 
-    @Column(nullable = false, updatable = false)
+    @Column
     @CreationTimestamp
     private Date create_time;
 
@@ -120,8 +118,8 @@ public class Offer
         this.status = status;
     }
 
-    public Date getCreate_time() {
-        return this.create_time;
+    public String getCreate_time() {
+        return this.create_time.toString();
     }
 
     public void setCreate_time(Date create_time) {

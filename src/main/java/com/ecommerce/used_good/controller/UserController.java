@@ -2,13 +2,11 @@ package com.ecommerce.used_good.controller;
 
 import java.util.List;
 
-import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,8 +22,6 @@ import com.ecommerce.used_good.service.AuthService;
 import com.ecommerce.used_good.service.UserService;
 import com.ecommerce.used_good.util.ConstantType;
 import com.ecommerce.used_good.util.SecurityUtils;
-
-import io.netty.handler.codec.http.HttpRequest;
 
 @RestController
 @RequestMapping("/users")
@@ -89,7 +85,7 @@ public class UserController
         if(loginUser == null)
             return (Response) SecurityUtils.sendResponse(response, 401, "unauthoried", null);
 
-        return new Response(userService.modifyUser(loginUser, user));
+        return new Response(userService.modifyUser(loginUser, user), "Modify User success");
     }
 
     @PreAuthorize("hasAnyAuthority('" + ConstantType.USER_ROLE_OWNER + "', '" + ConstantType.USER_ROLE_ADMIN + "')")

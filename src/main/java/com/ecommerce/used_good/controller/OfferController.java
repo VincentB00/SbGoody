@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.used_good.bean.Offer;
 import com.ecommerce.used_good.bean.User;
+import com.ecommerce.used_good.http.HttpResponseThrowers;
 import com.ecommerce.used_good.http.Response;
 import com.ecommerce.used_good.service.AuthService;
 import com.ecommerce.used_good.service.OfferService;
@@ -30,6 +31,44 @@ public class OfferController
 
     @Autowired
     private AuthService authService;
+
+    @GetMapping
+    public List<Offer> getAllSellerOffer(Authentication authentication)
+    {
+        User user = authService.getCurrentLoginUser(authentication);
+        return this.offerService.getAllByUserID(user.getId());
+    }
+
+    @GetMapping("/items")
+    public List<Offer> getAllBuyerOffer(Authentication authentication)
+    {
+        User user = authService.getCurrentLoginUser(authentication);
+        return this.offerService.getAllBuyerOffer(user);
+    }
+
+    @GetMapping("/{itemID}/{userID}")
+    public Offer getOffer(@PathVariable int itemID, @PathVariable int userID)
+    {
+        List<Offer> offers = this.offerService.getAllOfferByUserIDAndItemID(userID, itemID);
+
+        if(offers.isEmpty())
+            HttpResponseThrowers.throwBadRequest("No offer have been make on this item by this user");
+
+        return offers.get(0);
+    }
+
+    @GetMapping("items/{itemID}")
+    public Offer getMyOffer(@PathVariable int itemID, Authentication authentication)
+    {
+        User user = authService.getCurrentLoginUser(authentication);
+
+        List<Offer> offers = this.offerService.getAllOfferByUserIDAndItemID(user.getId(), itemID);
+
+        if(offers.isEmpty())
+            HttpResponseThrowers.throwBadRequest("No offer have been make on this item by this user");
+
+        return offers.get(0);
+    }
 
     
     @GetMapping("{itemID}")

@@ -27,6 +27,11 @@ public class ImageService
     @Autowired
     private AWSService awsService;
 
+    public List<Image> getAllByItemID(int itemID)
+    {
+        return this.imageDao.getAllByItemID(itemID);
+    }
+
     public Image getById(int id)
     {
         Optional<Image> optional = imageDao.findById(id);
@@ -50,6 +55,17 @@ public class ImageService
                 case ".jpg":
                 case ".png":
                 case ".jpeg":
+                case ".jfif":
+                case ".pjp":
+                case ".xbm":
+                case ".jxl":
+                case ".svgz":
+                case ".ico":
+                case ".tiff":
+                case ".webp":
+                case ".bmp":
+                case ".pjpeg":
+                case ".avif":
                     break;
                 default:
                     HttpResponseThrowers.throwBadRequest("images are not in image format, current image format:" + fileExtention);
@@ -62,8 +78,15 @@ public class ImageService
 
         for (MultipartFile image : images) 
         {
-            String fileName = String.format("user%s-%s", user.getId(), formatFileName(image.getOriginalFilename()));
+            String fileName = String.format("user%s-item%s-%s", user.getId(), item.getId(), formatFileName(image.getOriginalFilename()));
             String absoluteLocation = String.format("files/%s", fileName);
+
+            List<Image> tempImages = imageDao.getAllByFileName(fileName);
+
+            if(tempImages.parallelStream().anyMatch(i -> i.getFile_name().equals(fileName)))
+            {
+                continue;   
+            }
 
             try 
             {
@@ -85,8 +108,6 @@ public class ImageService
             }
         }
 
-        
-
         return imageList;
     }
 
@@ -97,8 +118,6 @@ public class ImageService
         String fileExtention = getFileExtention(fileName);
 
         fileName = fileName.substring(0, fileName.indexOf(fileExtention));
-
-        System.out.println(fileName);
 
         for(int size = fileName.length(), i = 0; i < size; i++) 
         {

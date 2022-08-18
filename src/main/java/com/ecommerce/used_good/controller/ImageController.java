@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -27,7 +28,7 @@ import com.ecommerce.used_good.util.ConstantType;
 
 @RestController
 @RequestMapping("/images")
-@PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
+
 public class ImageController 
 {
     @Autowired
@@ -42,6 +43,13 @@ public class ImageController
     @Autowired
     private ItemService itemService;
 
+    @GetMapping("{itemID}")
+    public List<Image> getAllImage(@PathVariable int itemID)
+    {
+        return this.imageService.getAllByItemID(itemID);
+    }
+
+    @PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
     @PostMapping("{itemID}")
     public List<Image> uploadImage(@PathVariable int itemID, @RequestPart("images") List<MultipartFile> images, Authentication authentication)
     {
@@ -52,6 +60,7 @@ public class ImageController
         return imageService.uploadImage(images, user, item);
     }
 
+    @PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
     @PutMapping("{imageID}")
     public Response modifyImage(@PathVariable int imageID, @RequestBody Image image)
     {
@@ -59,6 +68,7 @@ public class ImageController
         return this.imageService.modifyImage(imageID, image);
     }
 
+    @PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
     @DeleteMapping("{imageID}")
     public Response deleteImage(@PathVariable int imageID)
     {

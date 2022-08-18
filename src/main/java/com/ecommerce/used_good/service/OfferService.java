@@ -1,5 +1,6 @@
 package com.ecommerce.used_good.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +33,37 @@ public class OfferService
         return offerDao.getAllByItemID(itemID);
     }
 
+    public List<Offer> getAllOfferByUserIDAndItemID(int userID, int itemID)
+    {
+        return offerDao.getAllByUserIDAndItemID(userID, itemID);
+    }
+
+    public List<Offer> getAllOfferByItemID(int itemID)
+    {
+        return offerDao.getAllByItemID(itemID);
+    }
+
+    public List<Offer> getAllByUserID(int userID)
+    {
+        return this.offerDao.getAllByUserID(userID);
+    }
+
+    public List<Offer> getAllBuyerOffer(User user)
+    {
+        List<Offer> offers = new ArrayList<>();
+
+        List<Item> items = new ArrayList<>();
+
+        items = this.itemService.getAllItemByUserID(user.getId());
+
+        for(Item item: items)
+        {
+            offers.addAll(getAllOfferByItemID(item.getId()));
+        }
+
+        return offers;
+    }
+
     public Offer getById(int id)
     {
         Optional<Offer> optional = offerDao.findById(id);
@@ -59,6 +91,7 @@ public class OfferService
     public Response modifyOffer(Offer originOffer, Offer targetOffer)
     {
         Optional<Offer> optional = offerDao.findById(originOffer.getId());
+        
         if(!optional.isPresent())
             return (Response) HttpResponseThrowers.throwBadRequest("invalid or unable to find origin offer");
 

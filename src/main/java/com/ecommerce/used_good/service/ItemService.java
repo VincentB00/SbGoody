@@ -40,11 +40,17 @@ public class ItemService
         return item.get();
     }
 
+    public List<Item> getAllItemByUserID(int userID)
+    {
+        return this.itemDao.getAllByUserID(userID);
+    }
+
     public Item createItem(Item item, User user)
     {
         List<Category> categories = new ArrayList<>();
         for (Category categoryT : item.getCategories()) 
         {
+            categoryT.setName(categoryT.getName().toLowerCase());
             Category category = categoryDao.findByName(categoryT.getName());
             
             if(category != null)
@@ -59,6 +65,9 @@ public class ItemService
         }
 
         item.setCategories(categories);
+
+        item.setImages(null);
+
         item.setUser(user);
 
         item = itemDao.save(item);
@@ -71,6 +80,7 @@ public class ItemService
         List<Category> categories = new ArrayList<>();
         for (Category categoryT : targetItem.getCategories()) 
         {
+            categoryT.setName(categoryT.getName().toLowerCase());
             Category category = categoryDao.findByName(categoryT.getName());
             
             if(category != null)
@@ -83,6 +93,8 @@ public class ItemService
                 categories.add(category);
             }
         }
+
+        targetItem.setImages(null);
 
         ReplacementUtils.replaceValue(originalItem, targetItem);
         originalItem.setCategories(categories);
@@ -99,9 +111,8 @@ public class ItemService
         if(item != null)
             return this.modifyItem(item, targetItem);
         else
-        {
             return (Response) HttpResponseThrowers.throwBadRequest("Invalid origin item");
-        }
+
     }
 
     public boolean isOwner(Item item, User user)

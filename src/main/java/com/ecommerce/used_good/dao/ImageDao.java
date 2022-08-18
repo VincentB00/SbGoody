@@ -15,4 +15,7 @@ public interface ImageDao extends JpaRepository<Image, Integer>
     
     @Query(value = "select * from image i where i.item_id = :itemID", nativeQuery = true)
     public List<Image> getAllByItemID(@Param("itemID") int id);
+
+    @Query(value = "select * from image i where i.file_name = :fileName", nativeQuery = true)
+    public List<Image> getAllByFileName(@Param("fileName") String fileName);
 }

@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ecommerce.used_good.bean.Item;
 import com.ecommerce.used_good.bean.User;
+import com.ecommerce.used_good.http.HttpResponseThrowers;
 import com.ecommerce.used_good.http.Response;
 import com.ecommerce.used_good.service.AWSService;
 import com.ecommerce.used_good.service.AuthService;
 import com.ecommerce.used_good.service.ImageService;
 import com.ecommerce.used_good.service.ItemService;
 import com.ecommerce.used_good.util.ConstantType;
-import com.ecommerce.used_good.util.ViewPackers;
 
 @RestController
 @RequestMapping("/items")
@@ -42,25 +42,38 @@ public class ItemController
     @Autowired
     private AWSService awsService;
 
-    @GetMapping
+    @GetMapping("/all")
     public List<Item> getAllItems()
     {
         return this.itemService.getAllItems();
     }
 
     @GetMapping("/{id}")
-    public Item getItem(@PathVariable int id, HttpServletResponse res)
+    public Item getItem(@PathVariable int id)
     {
         return this.itemService.getItem(id);
     }
 
+    @PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
+    @GetMapping
+    public List<Item> getAllItemByUser(Authentication authentication)
+    {
+        User user = authService.getCurrentLoginUser(authentication);
+
+        return this.itemService.getAllItemByUserID(user.getId());
+    }
+
     @GetMapping("/is_owner/{itemID}")
     @PreAuthorize(ConstantType.HAS_ANY_ALL_AUTHORITY)
-    public String isOwner(@PathVariable int itemID, Authentication authentication)
+    public Response isOwner(@PathVariable int itemID, Authentication authentication)
     {
         User user = authService.getCurrentLoginUser(authentication);
         boolean isOwner = itemService.isOwner(itemID, user);
-        return ViewPackers.toJson("is_owner", isOwner);
+
+        if(isOwner)
+            return new Response(true, "this user is owner of this item");
+        else
+            return (Response) HttpResponseThrowers.throwBadRequest("this user is not owner of this item");
     }
 
     @PostMapping

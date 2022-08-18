@@ -26,11 +26,11 @@ import com.ecommerce.used_good.util.ConstantType;
 @PropertySource("classpath:application.properties")
 public class AWSService 
 {
-    @Value("${spring.datasource.url : AKIAYM2YZYLEMA2OUZHU}")
-    private String access_key = "AKIAYM2YZYLEMA2OUZHU";
+    @Value("${aws.service.access_key}")
+    private String access_key;
 
-    @Value("${aws.service.secret_key : Xe+CdKo6HY/JvMJuD7bAW04a9hpqT+kwS8Y6lrFz}")
-    private String secret_key = "Xe+CdKo6HY/JvMJuD7bAW04a9hpqT+kwS8Y6lrFz";
+    @Value("${aws.service.secret_key}")
+    private String secret_key;
 
     private AWSCredentials credentials;
 
@@ -51,9 +51,6 @@ public class AWSService
 
     public void setUpClient()
     {
-        // System.out.println(access_key);
-        // System.out.println(secret_key);
-        // System.out.println(environment);
         credentials = new BasicAWSCredentials(access_key, secret_key);
         s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(Regions.US_EAST_1).build();
     

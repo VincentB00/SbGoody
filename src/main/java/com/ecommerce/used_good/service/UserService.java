@@ -2,6 +2,7 @@ package com.ecommerce.used_good.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,7 +70,7 @@ public class UserService
         List<UserRole> userRoles = new ArrayList<>();
         userRoles.add(userRole);
         
-        user.setUserRoles(userRoles);
+        user.setUserRoles((Set<UserRole>) userRoles);
 
         userDao.save(user);
     }
@@ -78,14 +79,18 @@ public class UserService
     {
         int originId = originUser.getId();
 
+        String newPassword = targetUser.getPassword();
+
+        targetUser.setPassword(null);
+
         User dbUser = userDao.findById(originId).get();
 
         Boolean success = ReplacementUtils.replaceValue(dbUser, targetUser);
 
         if(success)
         {
-            if(targetUser.getPassword() != null)
-                dbUser.setPassword(sha256PasswordEncoder.encode(targetUser.getPassword()));
+            if(newPassword != null && !newPassword.trim().equals(""))
+                dbUser.setPassword(sha256PasswordEncoder.encode(newPassword));
 
             userDao.save(dbUser);
         }

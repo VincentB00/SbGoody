@@ -12,6 +12,9 @@ public interface OrderDao extends JpaRepository<Order, Integer>
 {
     public Order findByShippingLabel(String shipping_label);
 
-    @Query(value = "select * from order o where o.user_id = :userID", nativeQuery = true)
+    @Query(value = "select * from item_order o where o.user_id = :userID", nativeQuery = true)
     public List<Order> getAllByUserID(@Param("userID") int user_id);
+
+    @Query(value = "call getAllSellingOrder(:userID);", nativeQuery = true)
+    public List<Order> getAllSellingOrder(@Param("userID") int user_id);
 }

@@ -21,8 +21,14 @@ public class Shipping
     private int id;
 
     @Column
-    private String name;
-    
+    private String label;
+
+    @Column
+    private String reciever_name;
+
+    @Column
+    private String phone_number;
+
     @Column
     private String address;
     
@@ -42,9 +48,11 @@ public class Shipping
     public Shipping() {
     }
 
-    public Shipping(int id, String name, String address, String city, String state, String zip, User user) {
+    public Shipping(int id, String label, String reciever_name, String phone_number, String address, String city, String state, String zip, User user) {
         this.id = id;
-        this.name = name;
+        this.label = label;
+        this.reciever_name = reciever_name;
+        this.phone_number = phone_number;
         this.address = address;
         this.city = city;
         this.state = state;
@@ -60,12 +68,28 @@ public class Shipping
         this.id = id;
     }
 
-    public String getName() {
-        return this.name;
+    public String getLabel() {
+        return this.label;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getReciever_name() {
+        return this.reciever_name;
+    }
+
+    public void setReciever_name(String reciever_name) {
+        this.reciever_name = reciever_name;
+    }
+
+    public String getPhone_number() {
+        return this.phone_number;
+    }
+
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 
     public String getAddress() {
@@ -113,8 +137,18 @@ public class Shipping
         return this;
     }
 
-    public Shipping name(String name) {
-        setName(name);
+    public Shipping label(String label) {
+        setLabel(label);
+        return this;
+    }
+
+    public Shipping reciever_name(String reciever_name) {
+        setReciever_name(reciever_name);
+        return this;
+    }
+
+    public Shipping phone_number(String phone_number) {
+        setPhone_number(phone_number);
         return this;
     }
 
@@ -151,19 +185,21 @@ public class Shipping
             return false;
         }
         Shipping shipping = (Shipping) o;
-        return id == shipping.id && Objects.equals(name, shipping.name) && Objects.equals(address, shipping.address) && Objects.equals(city, shipping.city) && Objects.equals(state, shipping.state) && Objects.equals(zip, shipping.zip) && Objects.equals(user, shipping.user);
+        return id == shipping.id && Objects.equals(label, shipping.label) && Objects.equals(reciever_name, shipping.reciever_name) && Objects.equals(phone_number, shipping.phone_number) && Objects.equals(address, shipping.address) && Objects.equals(city, shipping.city) && Objects.equals(state, shipping.state) && Objects.equals(zip, shipping.zip) && Objects.equals(user, shipping.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, address, city, state, zip, user);
+        return Objects.hash(id, label, reciever_name, phone_number, address, city, state, zip, user);
     }
 
     @Override
     public String toString() {
         return "{" +
             " id='" + getId() + "'" +
-            ", name='" + getName() + "'" +
+            ", label='" + getLabel() + "'" +
+            ", reciever_name='" + getReciever_name() + "'" +
+            ", phone_number='" + getPhone_number() + "'" +
             ", address='" + getAddress() + "'" +
             ", city='" + getCity() + "'" +
             ", state='" + getState() + "'" +

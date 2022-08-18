@@ -12,4 +12,10 @@ public interface OfferDao extends JpaRepository<Offer, Integer>
 {
     @Query(value = "select * from offer o where o.item_id = :itemID", nativeQuery = true)
     public List<Offer> getAllByItemID(@Param("itemID") int id);
+
+    @Query(value = "select * from offer o where o.user_id = :userID", nativeQuery = true)
+    public List<Offer> getAllByUserID(@Param("userID") int id);
+
+    @Query(value = "select * from offer o where o.user_id = :userID and o.item_id = :itemID", nativeQuery = true)
+    public List<Offer> getAllByUserIDAndItemID(@Param("userID") int userID, @Param("itemID") int itemID);
 }
