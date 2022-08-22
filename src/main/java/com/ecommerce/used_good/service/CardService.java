@@ -28,6 +28,8 @@ public class CardService
     {
         card.setUser(user);
 
+        card.setId(0);
+
         this.cardDao.save(card);
 
         return new Response(true, "New Card have been save for user");

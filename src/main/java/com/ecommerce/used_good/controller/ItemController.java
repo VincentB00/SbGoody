@@ -92,6 +92,20 @@ public class ItemController
         return response;
     }
 
+    @PutMapping("/band/{itemID}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','OWNER')")
+    public Response bandItem(@PathVariable int itemID)
+    {
+        return this.itemService.bandItem(itemID);
+    }
+
+    @PutMapping("/unband/{itemID}")
+    @PreAuthorize("hasAnyAuthority('ADMIN','OWNER')")
+    public Response unbandItem(@PathVariable int itemID)
+    {
+        return this.itemService.unbandItem(itemID);
+    }
+
     @DeleteMapping("{itemID}")
     @PreAuthorize("hasAnyAuthority('ADMIN','OWNER')")
     public Response deleteItem(@PathVariable int itemID)

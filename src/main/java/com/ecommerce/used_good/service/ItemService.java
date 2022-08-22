@@ -14,6 +14,7 @@ import com.ecommerce.used_good.dao.CategoryDao;
 import com.ecommerce.used_good.dao.ItemDao;
 import com.ecommerce.used_good.http.HttpResponseThrowers;
 import com.ecommerce.used_good.http.Response;
+import com.ecommerce.used_good.util.ConstantType;
 import com.ecommerce.used_good.util.ReplacementUtils;
 
 @Service
@@ -60,7 +61,7 @@ public class ItemService
             else
             {
                 category = categoryDao.save(categoryT);
-                categories.add(category);
+                categories.add(categoryDao.findByName(categoryT.getName()));
             }
         }
 
@@ -89,8 +90,8 @@ public class ItemService
             }
             else
             {
-                category = categoryDao.save(categoryT);
-                categories.add(category);
+                categoryT = categoryDao.save(categoryT);
+                categories.add(categoryDao.findByName(categoryT.getName()));
             }
         }
 
@@ -138,5 +139,27 @@ public class ItemService
     {
         this.itemDao.deleteById(id);
         return new Response(true, "Delete item: " + id + " success");
+    }
+
+    public Response bandItem(int itemID)
+    {
+        Item item = this.getItem(itemID);
+
+        item.setStatus(ConstantType.ITEM_STATUS_BANDED);
+
+        this.itemDao.save(item);
+
+        return new Response(true, "Item have been banded");
+    }
+
+    public Response unbandItem(int itemID)
+    {
+        Item item = this.getItem(itemID);
+
+        item.setStatus(ConstantType.ITEM_STATUS_NORMAL);
+
+        this.itemDao.save(item);
+
+        return new Response(true, "Item have been unbanded");
     }
 }

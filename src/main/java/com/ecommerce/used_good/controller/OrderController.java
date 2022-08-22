@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,6 @@ import com.ecommerce.used_good.bean.Shipping;
 import com.ecommerce.used_good.bean.User;
 import com.ecommerce.used_good.http.Response;
 import com.ecommerce.used_good.service.AuthService;
-import com.ecommerce.used_good.service.ItemService;
 import com.ecommerce.used_good.service.MailService;
 import com.ecommerce.used_good.service.OfferService;
 import com.ecommerce.used_good.service.OrderService;
@@ -82,5 +82,11 @@ public class OrderController
         this.mailService.sendOrderHaveBeenPlaceEmail(order.getId());
 
         return new Response(true, "An order have been place");
+    }
+
+    @PutMapping
+    public Response modifyOrder(@RequestBody Order order)
+    {
+        return this.orderService.modifyOrder(order);
     }
 }

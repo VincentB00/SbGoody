@@ -65,10 +65,7 @@ public class User implements UserDetails
     )
     private Set<UserRole> userRoles;
 
-    // @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "user")
-    // private List<Item> items;
-
-    @Column(nullable = false, updatable = false)
+    @Column
     @CreationTimestamp
     private Date create_time;
 

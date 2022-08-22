@@ -1,6 +1,7 @@
 package com.ecommerce.used_good.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -67,10 +68,14 @@ public class UserService
         
         UserRole userRole = userRoleDao.findByType("NORMAL");
 
-        List<UserRole> userRoles = new ArrayList<>();
+        // List<UserRole> userRoles = new ArrayList<>();
+        // userRoles.add(userRole);
+
+        Set<UserRole> userRoles = new HashSet<UserRole>();
+
         userRoles.add(userRole);
         
-        user.setUserRoles((Set<UserRole>) userRoles);
+        user.setUserRoles(userRoles);
 
         userDao.save(user);
     }

@@ -18,6 +18,7 @@ import com.ecommerce.used_good.http.HttpResponseThrowers;
 import com.ecommerce.used_good.http.Response;
 import com.ecommerce.used_good.security.Sha256PasswordEncoder;
 import com.ecommerce.used_good.util.ConstantType;
+import com.ecommerce.used_good.util.ReplacementUtils;
 
 @Service
 public class OrderService 
@@ -92,7 +93,7 @@ public class OrderService
         itemDao.save(item);
 
         return order;
-    }    
+    }
 
     public String createShippingLabel(Offer offer)
     {
@@ -128,5 +129,19 @@ public class OrderService
             HttpResponseThrowers.throwBadRequest("this order is not associate with current user");
             
         return new Response(true, "this order is associate with current user");
+    }
+
+    public Response modifyOrder(Order order)
+    {
+        Order orderM = this.getOrder(order.getId());
+
+        order.setUser(null);
+        order.setItem(null);
+
+        ReplacementUtils.replaceValue(orderM, order);
+
+        this.orderDao.save(orderM);
+
+        return new Response(true, "order have been modified");
     }
 }

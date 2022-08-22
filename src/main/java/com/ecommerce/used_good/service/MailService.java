@@ -123,7 +123,7 @@ public class MailService
         stringBuilder.append(String.format("Name: ", order.getReciever_name()));
         stringBuilder.append(String.format("Phone Number: ", order.getPhone_number()));
         stringBuilder.append(String.format("Shipping Label: ", order.getShippingLabel()));
-        stringBuilder.append("Please make sure to update shipping information as soon as possible\n");
+        stringBuilder.append("Please make sure to ship or deliver item to ... for delivery to buyer as soon as possible\n");
         stringBuilder.append("For more detail please go to Goody.com\n");
         stringBuilder.append("Thank you for trusting Goody\n");
         emailData.setBody(stringBuilder.toString());
